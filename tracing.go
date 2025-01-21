@@ -7,7 +7,6 @@ import (
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
-	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
@@ -19,10 +18,10 @@ var tracer trace.Tracer
 
 func initTracer() (func(context.Context) error, error) {
 	// Create stdout exporter
-	stdoutExp, err := stdouttrace.New(stdouttrace.WithPrettyPrint())
-	if err != nil {
-		return nil, fmt.Errorf("failed to create stdout exporter: %w", err)
-	}
+	// stdoutExp, err := stdouttrace.New(stdouttrace.WithPrettyPrint())
+	// if err != nil {
+	// 	return nil, fmt.Errorf("failed to create stdout exporter: %w", err)
+	// }
 
 	// Create OTLP gRPC exporter
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
@@ -48,7 +47,7 @@ func initTracer() (func(context.Context) error, error) {
 
 	// Create trace provider
 	tp := sdktrace.NewTracerProvider(
-		sdktrace.WithBatcher(stdoutExp),
+		// sdktrace.WithBatcher(stdoutExp),
 		sdktrace.WithBatcher(otlpExp),
 		sdktrace.WithResource(res),
 	)
