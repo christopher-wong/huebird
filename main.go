@@ -225,6 +225,14 @@ func main() {
 	}
 	defer shutdownTracer(ctx)
 
+	// Add metrics endpoint
+	http.Handle("/metrics", promhttp.Handler())
+	go func() {
+		if err := http.ListenAndServe(":2112", nil); err != nil {
+			logger.Error("metrics server failed", zap.Error(err))
+		}
+	}()
+
 	// Start NATS server
 	ns, err := setupNatsServer()
 	if err != nil {
@@ -261,12 +269,4 @@ func main() {
 	for range ticker.C {
 		fetchAndProcessGames(ctx, nc, kv, teamFilter)
 	}
-
-	// Add metrics endpoint
-	http.Handle("/metrics", promhttp.Handler())
-	go func() {
-		if err := http.ListenAndServe(":2112", nil); err != nil {
-			logger.Error("metrics server failed", zap.Error(err))
-		}
-	}()
 }

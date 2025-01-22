@@ -27,7 +27,7 @@ func initTracer() (func(context.Context) error, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 	otlpExp, err := otlptracegrpc.New(ctx,
-		otlptracegrpc.WithEndpoint("localhost:4317"),
+		// otlptracegrpc.WithEndpoint("localhost:4317"),
 		otlptracegrpc.WithInsecure(),
 	)
 	if err != nil {
