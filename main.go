@@ -34,9 +34,10 @@ func fetchAndProcessGames(ctx context.Context, nc *nats.Conn, kv nats.KeyValue, 
 	// Create child span for HTTP request
 	reqCtx, reqSpan := tracer.Start(sCtx, "espn_api_request")
 
+	dt := time.Now().Format("20060102")
+
 	// Create request with context
-	// yesterday := time.Now().AddDate(0, 0, -1).Format("20060102")
-	url := fmt.Sprintf("https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?dates=%s", "20250119")
+	url := fmt.Sprintf("https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?dates=%s", dt)
 
 	req, err := http.NewRequestWithContext(reqCtx, http.MethodGet, url, nil)
 	if err != nil {
