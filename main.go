@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -225,6 +227,17 @@ func main() {
 	}
 	defer shutdownTracer(ctx)
 
+	var pollRateSeconds int = 5
+	pollRateEnv := os.Getenv("POLL_RATE_SECONDS")
+	if pollRateEnv != "" {
+		parsed, err := strconv.Atoi(pollRateEnv)
+		if err != nil {
+			panic(err)
+		}
+
+		pollRateSeconds = parsed
+	}
+
 	// Add metrics endpoint
 	http.Handle("/metrics", promhttp.Handler())
 	go func() {
@@ -259,7 +272,7 @@ func main() {
 	teamFilter := "Eagles"
 	teamFilter = strings.ToLower(teamFilter)
 
-	ticker := time.NewTicker(5 * time.Second)
+	ticker := time.NewTicker(time.Duration(pollRateSeconds) * time.Second)
 	defer ticker.Stop()
 
 	// First immediate fetch
